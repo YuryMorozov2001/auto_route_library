@@ -1388,6 +1388,24 @@ abstract class StackRouter extends RoutingController {
     return scope._push<T>(route, onFailure: onFailure);
   }
 
+  /// Removes last entry in stack and pushes given [route] with animation
+  /// Unlike [replace], this method forces an animation even when replacing
+  /// a route with the same route type
+  ///
+  /// if [onFailure] callback is provided, navigation errors will be passed to it
+  /// otherwise they'll be thrown
+  @optionalTypeArgs
+  Future<T?> forceReplace<T extends Object?>(
+    PageRouteInfo route, {
+    OnNavigationFailure? onFailure,
+  }) {
+    final scope = _findStackScope(route);
+    scope._removeLast(notify: false);
+    markUrlStateForReplace();
+    scope._stackKey = UniqueKey();
+    return scope._push<T>(route, onFailure: onFailure);
+  }
+
   Future<T?> _redirect<T extends Object?>(
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
